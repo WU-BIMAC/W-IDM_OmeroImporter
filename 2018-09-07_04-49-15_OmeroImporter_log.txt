@@ -1,0 +1,25 @@
+2018-09-07_04-49-15 - OmeroImporter started
+Successfully read metadata for AV19.38
+Successfully read metadata for AV19.38.0
+Successfully read metadata for pat tumor cd45.nd2.csv
+Successfully read metadata for pat tumor H+E.nd2.csv
+Successfully read metadata for AV19.39
+Successfully read metadata for AV19.39.0
+Successfully read metadata for pat normal cd45.nd2.csv
+Successfully read metadata for pat normal H+E.nd2.csv
+Successfully read metadata for pat tumor cd45.nd2.csv
+Successfully read metadata for pat tumor H+E.nd2.csv
+Image AV19.38.0\pat tumor cd45.nd2 previously imported
+Image AV19.38.0\pat tumor H+E.nd2 previously imported
+File already exists in destination, copy avoided : AV19.38.0.csv
+File already exists in destination, copy avoided : pat tumor cd45.nd2.csv
+File already exists in destination, copy avoided : pat tumor H+E.nd2.csv
+Image AV19.39.0\pat normal cd45.nd2 previously imported
+Image AV19.39.0\pat normal H+E.nd2 previously imported
+Image AV19.39.0\pat tumor cd45.nd2 previously imported
+Image AV19.39.0\pat tumor H+E.nd2 previously imported
+File already exists in destination, copy avoided : AV19.39.0.csv
+File already exists in destination, copy avoided : pat normal cd45.nd2.csv
+File already exists in destination, copy avoided : pat normal H+E.nd2.csv
+File already exists in destination, copy avoided : pat tumor cd45.nd2.csv
+File already exists in destination, copy avoided : pat tumor H+E.nd2.csv
