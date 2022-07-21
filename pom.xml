@@ -4,34 +4,50 @@
 		http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
+	<!-- parent>
 		<groupId>ome</groupId>
 		<artifactId>pom-omero-client</artifactId>
 		<version>5.4.3</version>
-	</parent>
+	</parent-->
 
 	<groupId>edu.umassmed.OmeroImporter</groupId>
-	<artifactId>CancerAvatarOmeroImporter</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>W-IDM_OmeroDataImporter</artifactId>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>CancerAvatarOmeroImporter</name>
+	<name>W-IDM_OmeroDataImporter</name>
 	<description>TBD</description>
 	<url>TBD</url>
 
 	<dependencies>
 		<dependency>
+			<groupId>b2-tools</groupId>
+			<artifactId>b2-windows</artifactId>
+			<version>1</version>
+			<type>exe</type>
+		</dependency>
+		<dependency>
 			<groupId>edu.umassmed.OmeroDataWriter</groupId>
-			<artifactId>CancerAvatarOmeroDataWriter</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>W-IDM_OmeroDataWriter</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
-			<version>4.11</version>
+			<version>4.13.1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.openmicroscopy</groupId>
+			<artifactId>omero-gateway</artifactId>
+			<version>5.6.7</version>
+		</dependency>
+		<!-- dependency>
 			<groupId>omero</groupId>
 			<artifactId>blitz</artifactId>
 		</dependency>
@@ -42,9 +58,9 @@
 		<dependency>
 			<groupId>ome</groupId>
 			<artifactId>formats-gpl</artifactId>
-		</dependency>
+		</dependency-->
 	</dependencies>
-	<profiles>
+	<!-- profiles>
 		<profile>
 			<id>ice35</id>
 			<activation>
@@ -68,7 +84,7 @@
 				<ice.version>ice36</ice.version>
 			</properties>
 		</profile>
-	</profiles>
+	</profiles-->
 	
 	<repositories>
 		<repository>
@@ -76,6 +92,11 @@
 			<url>http://artifacts.openmicroscopy.org/artifactory/maven/</url>
 		</repository>
 		<repository>
+			<id>data-local</id>
+			<name>data</name>
+			<url>file://${project.basedir}/scripts</url>
+		</repository>
+		<!-- repository>
 			<id>unidata-releases</id>
 			<name>unidata-releases</name>
 			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
@@ -84,9 +105,8 @@
 			<id>zeroc</id>
 			<name>zeroc</name>
 			<url>https://repo.zeroc.com/nexus/content/repositories/releases/</url>
-		</repository>
+		</repository-->
 	</repositories>
-
 	<build>
 		<finalName>${project.name}-${project.version}</finalName>
 		<plugins>
@@ -107,7 +127,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>dependency-jars/</classpathPrefix>
-							<mainClass>edu.umassmed.OmeroImporter.OmeroImporterFlat</mainClass>
+							<mainClass>edu.umassmed.OmeroImporter.OmeroImporter</mainClass>
 						</manifest>
 						<manifestEntries>              
              				<!--<Class-Path>omega-0.0.1-SNAPSHOT.jar</Class-Path>-->
@@ -129,6 +149,18 @@
 						<configuration>
 							<!-- exclude junit, we need runtime dependency only -->
 							<outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-scripts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludeTypes>jar</excludeTypes>
+							<outputDirectory>${project.build.directory}/scripts</outputDirectory>
+							<!--stripVersion>true</stripVersion-->
 						</configuration>
 					</execution>
 				</executions>
