@@ -2,7 +2,14 @@
 This repository contains software to read a folder containing images, read associated metadata csv files and automatically imports the images in an OMERO repository and write those metadata in OMERO key-value pair.  
 Additionally it is possible to use it to copy the images in a backup location OR a Backblaze backup location.
 
-The current folder structure required is as follows:  
+## Installation
+TODO
+
+## Launch
+
+## Configuration
+
+The application requires a specific folder structure in the directory that is going to be selected The current folder structure required is as follows:  
 0. Folder to read  
 &nbsp;&nbsp;&nbsp;&nbsp;1. Project container folder  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2a. Project csv file  
