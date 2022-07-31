@@ -1,15 +1,21 @@
 # W-IDM_OmeroImporter
 This repository contains software to read a folder containing images, read associated metadata csv files and automatically imports the images in an OMERO repository and write those metadata in OMERO key-value pair.  
-Additionally it is possible to use it to copy the images in a backup location OR a Backblaze backup location.
+Additionally it is possible to use it to copy the images in a backup location OR a Backblaze backup location. 
+
 
 ## Installation
-TODO
+To install the application simply download the current release zip file, and unpack it a location of your choice on the system where you plan to run the importing to OMERO. 
 
-## Launch
+## Launch 
+The application can be run as via command line, via script or via scheduler / crone job. 
+In all case the application can be run using a configuration file or using command line parameters. 
+To use the configuration file a folder named OmeroImporter needs to be created under the user folder, and a configuration file named "OmeroImporter.cfg" needs to placed there. 
+The configuration file requires to have a parameter per line as the following example: hostname<TABSPACE>omero.server.address
 
-## Configuration
+## Target folder configuration
 
-The application requires a specific folder structure in the directory that is going to be selected The current folder structure required is as follows:  
+The application requires a specific folder structure in the directory that is going to be selected to be imported. 
+The current folder structure required is as follows:  
 0. Folder to read  
 &nbsp;&nbsp;&nbsp;&nbsp;1. Project container folder  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2a. Project csv file  
@@ -19,6 +25,8 @@ The application requires a specific folder structure in the directory that is go
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4a. Images csv file  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4b. Images files  
 
+## Application configuration
+
 The software contains a inbuilt help for command-line run or it can be run using a configuration file to be placed as follows:   userHomeFolder/OmeroImporter/OmeroImporter.cfg  
 
 The current available options are:
@@ -26,7 +34,7 @@ CommandLine arg | Config file | Argument | Functionality
 ----------------|---------------|---------------|---------------
 -cfg | | | to run with a configuration file
 -h | | | to see help  
--H | hostname| <omero.server.address> | to set the server address  
+-H | hostname | <omero.server.address> | to set the server address  
 -P | port | <omero.server.port> | to set the server port  
 -u | username | <omero.server.username> | to set the server username  
 -p | password | <omero.server.password> | to set the server password 
