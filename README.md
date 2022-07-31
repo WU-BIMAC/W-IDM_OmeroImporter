@@ -7,10 +7,10 @@ Additionally it is possible to use it to copy the images in a backup location OR
 To install the application simply download the current release zip file, and unpack it a location of your choice on the system where you plan to run the importing to OMERO. 
 
 ## Launch 
-The application can be run as via command line, via script or via scheduler / crone job. 
-In all case the application can be run using a configuration file or using command line parameters. 
+The application can be run as via command line, via script or via scheduler / crone job.  
+In all case the application can be run using a configuration file or using command line parameters.  
 To use the configuration file a folder named OmeroImporter needs to be created under the user folder, and a configuration file named "OmeroImporter.cfg" needs to placed there. 
-The configuration file requires to have a parameter per line as the following example: hostname<TABSPACE>omero.server.address
+The configuration file requires to have a parameter per line as the following example: hostname<TABSPACE>omero.server.address.  
 
 ## Target folder configuration
 
