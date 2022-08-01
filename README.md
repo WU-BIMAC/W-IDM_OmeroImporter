@@ -1,6 +1,14 @@
 # W-IDM_OmeroImporter
 This repository contains software to read a folder containing images, read associated metadata csv files and automatically imports the images in an OMERO repository and write those metadata in OMERO key-value pair.  
-Additionally it is possible to use it to copy the images in a backup location OR a Backblaze backup location. 
+The additional feature include:  
+1) Copy the images and the metadata files in a backup location (either mapped or Backblaze at the moment) and optionally delete the images and metadata files from the origin.  
+2) Read Micro-Meta app json metadata files together with the associated images and import them on OMERO as file attachments compatibile with Micro-Meta app OMERO plugin.  
+3) For each run create a file with a list of the succesfully imported files, and a file with a list of csv metadata succesfully files written on OMERO.  
+4) Use the "previously imported" list to avoid repeating operations in case the files are not removed from the origin folder.  
+5) Use the "metadata previously written" list to avoid overriding metadata in case the files are not removed from the origin folder.  
+6) For each run create files with errors for debug purposes.  
+7) Automatically email the user "owner" of the importing session, if indicated in the parameters, at the end of the importing with relevant data about the process.  
+8) Automatically email the user "admin" of the setup, if indicated in the parameters, at the end of the importing with attached all the output file.  
 
 
 ## Installation
