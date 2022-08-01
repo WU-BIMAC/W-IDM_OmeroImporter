@@ -48,5 +48,4 @@ CommandLine arg | Config file | Argument | Functionality
 -aml | admin-email | <admin.email.com> | to email the admin a copy of the output and log files once the process is completed  
 -tf | timeframe | <<timeStart:timeEnd>> | to specify a timeframe in which the application should run (this forces the application to exit once outside the timeframe
 
-NB: in configuration file the option name and the argument needs to be divided by a TAB space (\t).  
 
