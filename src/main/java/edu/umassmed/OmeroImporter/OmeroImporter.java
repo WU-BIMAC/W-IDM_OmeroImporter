@@ -85,53 +85,53 @@ public class OmeroImporter {
 	private SecurityContext ctx;
 	private Gateway gateway;
 	private LoginCredentials cred;
-	
+
 	private final String extFilter = "";
 	private final String nameFilter = "";
-	
-	private OmeroDataWriter dataWriter;
 
+	private OmeroDataWriter dataWriter;
+	
 	private static String outputLogFileName = "OmeroImporter_log.txt";
 	private static String outputMetadataLogFileName = "OmeroImporter_metadata_log.txt";
 	private static String outputImportedFileName = "OmeroImporter_imported.txt";
 	private static String outputMetadataFileName = "OmeroImporter_metadata.txt";
 	private static String configFileFolder = "OmeroImporter";
 	private static String configFileName = "OmeroImporter.cfg";
-	
+
 	private static String SCRIPTS = "scripts";
 	private static String B2_LOCAL_STRING = "b2-tools" + File.separator
 			+ "b2-windows" + File.separator + "1";
 	private static String B2_COMMAND = "b2-windows-1.exe";
-
-	private static String EMAIL_FROM_ADDRESS = "worcesterimagedatamanagement@gmail.com";
-	private static String EMAIL_APP_PASSWORD = "lelvdfiwjrimbjvi";
 	
+	private static String EMAIL_FROM_ADDRESS = "youradmin@email.com";
+	private static String EMAIL_APP_PASSWORD = "youradminpassword";
+
 	private final File configFile;
 	private File outputLogFile;
 	private File outputMetadataLogFile;
 	private File outputImportedFile;
 	private File outputMetadataFile;
-	
+
 	private boolean metadataLogFileNeeded;
 	private boolean headless;
 	private boolean deleteFiles;
 	private boolean hasMMAFiles;
 	private boolean hasB2;
-	
+
 	private String target;
 	private String destination;
 	private String b2AppKeyId;
 	private String b2AppKey;
 	private String b2BucketName;
 	private final String b2Command;
-
+	
 	private String emailTo;
 	private String adminEmailTo;
-
+	
 	private JFrame hiddenFrame;
-	
+
 	private static boolean IGNORE_TIME = true;
-	
+
 	private static String metadataIdent = "Pazour Lab Experimental Metadata - \\S+";
 	final DateTimeFormatter formatter = DateTimeFormatter
 			.ofPattern("yyyy-MM-dd_HH-mm-ss");
@@ -139,26 +139,26 @@ public class OmeroImporter {
 	private int timeEnd;
 	private final static String CSV_EXT = ".csv";
 	private final static String JSON_EXT = ".json";
-
+	
 	public OmeroImporter() {
-
+		
 		this.headless = false;
 		this.deleteFiles = false;
 		this.hasMMAFiles = false;
 		this.hasB2 = false;
-		
+
 		this.target = null;
 		this.destination = null;
 		this.b2AppKeyId = null;
 		this.b2AppKey = null;
 		this.b2BucketName = null;
-
+		
 		this.emailTo = null;
 		this.adminEmailTo = null;
-		
+
 		this.timeStart = -1;
 		this.timeEnd = -1;
-		
+
 		String b2Command = System.getProperty("user.dir") + File.separator
 				+ OmeroImporter.SCRIPTS + File.separator
 				+ OmeroImporter.B2_COMMAND;
@@ -170,43 +170,43 @@ public class OmeroImporter {
 		}
 		System.out.println(b2Command);
 		this.b2Command = b2Command;
-		
+
 		final String homeFolder = System.getProperty("user.home");
 		final String configFileString = homeFolder + File.separator
 				+ OmeroImporter.configFileFolder + File.separator
 				+ OmeroImporter.configFileName;
-		
+
 		this.configFile = new File(configFileString);
-
+		
 		this.config = new ome.formats.importer.ImportConfig();
-
+		
 		this.config.email.set("");
 		this.config.sendFiles.set(true);
 		this.config.sendReport.set(false);
 		this.config.contOnError.set(false);
 		this.config.debug.set(false);
-		
+
 		this.metadataLogFileNeeded = false;
 	}
-
+	
 	public void setServerAccessInformation(final String hostName_arg,
 			final Integer port_arg, final String userName_arg,
 			final String psw_arg) {
-
+		
 		final String hostName = hostName_arg;
 		final Integer port = port_arg;
 		final String userName = userName_arg;
 		final String psw = psw_arg;
-
+		
 		this.config.hostname.set(hostName);
 		this.config.port.set(port);
 		this.config.username.set(userName);
 		this.config.password.set(psw);
-
+		
 		this.cred = new LoginCredentials(userName, psw, hostName, port);
 		this.dataWriter = new OmeroDataWriter(hostName, port, userName, psw);
 	}
-	
+
 	public void init() throws Exception {
 		this.store = this.config.createStore();
 		this.store.logVersionInfo(this.config.getIniVersionNumber());
@@ -214,7 +214,7 @@ public class OmeroImporter {
 		this.library = new ImportLibrary(this.store, this.reader);
 		this.handler = new ErrorHandler(this.config);
 		this.library.addObserver(new LoggingImportMonitor());
-		
+
 		final Logger simpleLogger = new SimpleLogger();
 		this.gateway = new Gateway(simpleLogger);
 		this.browser = this.gateway.getFacility(BrowseFacility.class);
@@ -222,9 +222,9 @@ public class OmeroImporter {
 		this.dataManager = this.gateway.getFacility(DataManagerFacility.class);
 		final ExperimenterData user = this.gateway.connect(this.cred);
 		this.ctx = new SecurityContext(user.getGroupId());
-		
-		this.dataWriter.init();
 
+		this.dataWriter.init();
+		
 		this.hiddenFrame = new JFrame("Hidden frame");
 		// this.hiddenFrame.setVisible(true);
 		this.hiddenFrame.setSize(1, 1);
@@ -236,11 +236,11 @@ public class OmeroImporter {
 		final int posY = (int) (screenSize.getHeight() / 2);
 		this.hiddenFrame.setLocation(posX, posY);
 	}
-	
+
 	public Map<String, String> readConfigFile() {
 		final Map<String, String> parameters = new LinkedHashMap<String, String>();
 		final File f = this.configFile;
-		
+
 		FileReader fr;
 		BufferedReader br;
 		try {
@@ -252,7 +252,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 			return null;
 		}
-		
+
 		try {
 			String line = br.readLine();
 			while (line != null) {
@@ -281,14 +281,14 @@ public class OmeroImporter {
 		}
 		return parameters;
 	}
-	
+
 	public Long retrieveImageId(final String imageName,
 			final String datasetName, final String projectName)
 			throws DSOutOfServiceException, DSAccessException {
 		List<Long> datasetIDs = this.retrieveDatasetIDsFromProject(projectName);
 		final Collection<DatasetData> datasets = this.browser
 				.getDatasets(this.ctx, datasetIDs);
-		
+
 		final Iterator<DatasetData> i = datasets.iterator();
 		DatasetData dataset = null;
 		while (i.hasNext()) {
@@ -299,12 +299,12 @@ public class OmeroImporter {
 		}
 		if (dataset == null)
 			return -1L;
-		
+
 		datasetIDs = new ArrayList<Long>();
 		datasetIDs.add(dataset.getId());
 		final Collection<ImageData> images = this.browser
 				.getImagesForDatasets(this.ctx, datasetIDs);
-		
+
 		final Iterator<ImageData> i2 = images.iterator();
 		ImageData image;
 		while (i2.hasNext()) {
@@ -312,10 +312,10 @@ public class OmeroImporter {
 			if (image.getName().equals(imageName))
 				return image.getId();
 		}
-		
+
 		return -1L;
 	}
-	
+
 	public Long retrieveDatasetId(final String datasetName,
 			final String projectName)
 			throws DSOutOfServiceException, DSAccessException {
@@ -323,7 +323,7 @@ public class OmeroImporter {
 				.retrieveDatasetIDsFromProject(projectName);
 		final Collection<DatasetData> datasets = this.browser
 				.getDatasets(this.ctx, datasetIDs);
-
+		
 		final Iterator<DatasetData> i = datasets.iterator();
 		DatasetData dataset;
 		while (i.hasNext()) {
@@ -333,7 +333,7 @@ public class OmeroImporter {
 		}
 		return -1L;
 	}
-
+	
 	public List<Long> retrieveDatasetIDsFromProject(final String projectName)
 			throws DSOutOfServiceException, DSAccessException {
 		final List<Long> datasetIDs = new ArrayList<Long>();
@@ -349,15 +349,15 @@ public class OmeroImporter {
 				}
 			}
 		}
-
+		
 		return datasetIDs;
 	}
-	
+
 	public Long retrieveProjectId(final String projectName)
 			throws DSOutOfServiceException, DSAccessException {
 		final Collection<ProjectData> projects = this.browser
 				.getProjects(this.ctx);
-
+		
 		final Iterator<ProjectData> i = projects.iterator();
 		ProjectData project;
 		while (i.hasNext()) {
@@ -367,7 +367,7 @@ public class OmeroImporter {
 		}
 		return -1L;
 	}
-
+	
 	public Long retrieveUserId(final String userName)
 			throws DSOutOfServiceException, DSAccessException {
 		final ExperimenterData experimenter = this.admin
@@ -376,7 +376,7 @@ public class OmeroImporter {
 			return -1L;
 		return experimenter.getId();
 	}
-	
+
 	public void close() {
 		if (!this.metadataLogFileNeeded) {
 			this.outputMetadataLogFile.delete();
@@ -394,13 +394,13 @@ public class OmeroImporter {
 			this.store.logout();
 		}
 	}
-
+	
 	private void initLogFiles() {
 		final LocalDateTime now = LocalDateTime.now();
 		final String date = now.format(this.formatter);
-
+		
 		final String path = System.getProperty("user.dir") + File.separator;
-
+		
 		final String outputLogFileName = path + date + "_"
 				+ OmeroImporter.outputLogFileName;
 		this.outputLogFile = new File(outputLogFileName);
@@ -410,7 +410,7 @@ public class OmeroImporter {
 			this.printToConsole("OmeroImporter - creating log file failed");
 			this.printToConsole(ex.getMessage());
 		}
-		
+
 		final String outputMetadataLogFileName = path + date + "_"
 				+ OmeroImporter.outputMetadataLogFileName;
 		this.outputMetadataLogFile = new File(outputMetadataLogFileName);
@@ -421,7 +421,7 @@ public class OmeroImporter {
 					+ OmeroImporter.outputMetadataLogFileName + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-
+		
 		final String outputImportedFileName = path + date + "_"
 				+ OmeroImporter.outputImportedFileName;
 		this.outputImportedFile = new File(outputImportedFileName);
@@ -432,7 +432,7 @@ public class OmeroImporter {
 					+ OmeroImporter.outputImportedFileName + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-		
+
 		final String outputMetadataFileName = path + date + "_"
 				+ OmeroImporter.outputMetadataFileName;
 		this.outputMetadataFile = new File(outputMetadataFileName);
@@ -445,13 +445,13 @@ public class OmeroImporter {
 		}
 		this.writeToLog("OmeroImporter started\n");
 	}
-	
+
 	private void writeToMetadataLogAndLog(final String s) {
 		final LocalDateTime now = LocalDateTime.now();
 		final String nowFormat = now.format(this.formatter);
-
-		this.writeToLog(s);
 		
+		this.writeToLog(s);
+
 		final String filename = this.outputMetadataLogFile.getName();
 		this.metadataLogFileNeeded = true;
 		FileWriter fw = null;
@@ -463,7 +463,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 		}
 		final BufferedWriter bw = new BufferedWriter(fw);
-
+		
 		try {
 			if (s == null) {
 				bw.write(nowFormat + " - " + "No Message");
@@ -475,7 +475,7 @@ public class OmeroImporter {
 					"Write line error in OmeroImporter for " + filename + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-
+		
 		try {
 			bw.close();
 			fw.close();
@@ -485,7 +485,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 		}
 	}
-	
+
 	private void sendErrorEmail(final String error) {
 		final String subject = "Omero Import error report";
 		String text = "Omero Importer job has been terminated due to the following error:\n";
@@ -493,7 +493,7 @@ public class OmeroImporter {
 		this.sendEmail(subject, text);
 		this.sendAdminEmail(subject, text);
 	}
-	
+
 	// private void sendCompleteNoImportEmail(final List<String> errors) {
 	// final String subject = "Omero Importer job completion report";
 	// String text = "Omero Importer job successfully complete.\nNo images have
@@ -512,7 +512,7 @@ public class OmeroImporter {
 	// this.sendAdminEmail(subject, text);
 	//
 	// }
-
+	
 	private void sendCompleteEmail(final List<String> imported,
 			final List<String> metadataWritten, final List<String> errors) {
 		final String subject = "Omero Importer job completion report";
@@ -545,7 +545,7 @@ public class OmeroImporter {
 		this.sendEmail(subject, text);
 		this.sendAdminEmail(subject, text);
 	}
-
+	
 	private void sendAdminEmail(final String subject, final String s) {
 		String body = s;
 		body += "\nThis is an automatic message from an unsupervised email address, please do not reply to this mail.\n";
@@ -566,31 +566,31 @@ public class OmeroImporter {
 					new InternetAddress(this.adminEmailTo));
 			message.setSubject(subject);
 			// message.setText(body);
-			
+
 			final MimeBodyPart mimeBodyPart = new MimeBodyPart();
 			mimeBodyPart.setContent(body, "text/plain; charset=utf-8");
-			
+
 			final Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(mimeBodyPart);
-			
+
 			final MimeBodyPart attachmentBodyPart1 = new MimeBodyPart();
 			attachmentBodyPart1.attachFile(this.outputLogFile);
 			multipart.addBodyPart(attachmentBodyPart1);
-			
+
 			final MimeBodyPart attachmentBodyPart2 = new MimeBodyPart();
 			attachmentBodyPart2.attachFile(this.outputMetadataLogFile);
 			multipart.addBodyPart(attachmentBodyPart2);
-			
+
 			final MimeBodyPart attachmentBodyPart3 = new MimeBodyPart();
 			attachmentBodyPart3.attachFile(this.outputImportedFile);
 			multipart.addBodyPart(attachmentBodyPart3);
-			
+
 			final MimeBodyPart attachmentBodyPart4 = new MimeBodyPart();
 			attachmentBodyPart4.attachFile(this.outputMetadataFile);
 			multipart.addBodyPart(attachmentBodyPart4);
-
-			message.setContent(multipart);
 			
+			message.setContent(multipart);
+
 			final Transport tr = session.getTransport("smtp");
 			tr.connect("smtp.gmail.com", OmeroImporter.EMAIL_FROM_ADDRESS,
 					OmeroImporter.EMAIL_APP_PASSWORD);
@@ -604,9 +604,9 @@ public class OmeroImporter {
 			this.writeToLog("Error sending mail" + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-		
+
 	}
-	
+
 	private void sendEmail(final String subject, final String s) {
 		String body = s;
 		body += "\nThis is an automatic message from an unsupervised email address, please do not reply to this mail.\n";
@@ -637,16 +637,16 @@ public class OmeroImporter {
 			this.writeToLog("Error sending mail" + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-		
+
 	}
-	
+
 	private void printToConsole(final String s) {
 		final LocalDateTime now = LocalDateTime.now();
 		final String nowFormat = now.format(this.formatter);
 		System.out.println(nowFormat + " - " + s);
-		
-	}
 
+	}
+	
 	private void writeToLog(final String s) {
 		final LocalDateTime now = LocalDateTime.now();
 		final String nowFormat = now.format(this.formatter);
@@ -658,7 +658,7 @@ public class OmeroImporter {
 			this.printToConsole(ex.getMessage());
 		}
 		final BufferedWriter bw = new BufferedWriter(fw);
-
+		
 		try {
 			if (s == null) {
 				bw.write(nowFormat + " - " + "No Message");
@@ -669,7 +669,7 @@ public class OmeroImporter {
 			this.printToConsole("OmeroImporter - writing log file failed");
 			this.printToConsole(ex.getMessage());
 		}
-
+		
 		try {
 			bw.close();
 			fw.close();
@@ -677,9 +677,9 @@ public class OmeroImporter {
 			this.printToConsole("OmeroImporter - closing log file failed");
 			this.printToConsole(ex.getMessage());
 		}
-		
-	}
 
+	}
+	
 	private void writeToPreviousMetadataFile(final List<String> imported) {
 		FileWriter fw = null;
 		final String filename = this.outputMetadataFile.getName();
@@ -691,7 +691,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 		}
 		final BufferedWriter bw = new BufferedWriter(fw);
-		
+
 		try {
 			bw.write("Files Metadata was written for:\n");
 			for (final String s : imported) {
@@ -704,7 +704,7 @@ public class OmeroImporter {
 					"Write line error in OmeroImporter for " + filename + "\n");
 			this.writeToLog(ex.getMessage());
 		}
-		
+
 		try {
 			bw.close();
 			fw.close();
@@ -714,7 +714,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage());
 		}
 	}
-
+	
 	private void writeToPreviousImportedFile(final List<String> imported) {
 		FileWriter fw = null;
 		final String filename = this.outputImportedFile.getName();
@@ -726,7 +726,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 		}
 		final BufferedWriter bw = new BufferedWriter(fw);
-		
+
 		try {
 			bw.write("Files imported:\n");
 			for (final String s : imported) {
@@ -739,7 +739,7 @@ public class OmeroImporter {
 					"Write line error in OmeroImporter for " + filename + "\n");
 			this.writeToLog(ex.getMessage());
 		}
-		
+
 		try {
 			bw.close();
 			fw.close();
@@ -749,7 +749,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage());
 		}
 	}
-	
+
 	private List<String> readFromPreviousMetadataFiles() {
 		final String path = System.getProperty("user.dir");
 		final List<String> previousMetadata = new ArrayList<String>();
@@ -765,7 +765,7 @@ public class OmeroImporter {
 		}
 		return previousMetadata;
 	}
-	
+
 	private List<String> readFromPreviousImportedFiles() {
 		final String path = System.getProperty("user.dir");
 		final List<String> previousImported = new ArrayList<String>();
@@ -781,7 +781,7 @@ public class OmeroImporter {
 		}
 		return previousImported;
 	}
-
+	
 	private List<String> readFromPreviousMetadataFile(final File f) {
 		// final File f = new File(OmeroImporterFlat.outputImportedFileName);
 		final List<String> previousMetadata = new ArrayList<String>();
@@ -796,7 +796,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 		}
 		final BufferedReader br = new BufferedReader(fr);
-
+		
 		String line = null;
 		try {
 			line = br.readLine();
@@ -816,7 +816,7 @@ public class OmeroImporter {
 					+ f.getName() + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-
+		
 		try {
 			br.close();
 			fr.close();
@@ -827,7 +827,7 @@ public class OmeroImporter {
 		}
 		return previousMetadata;
 	}
-	
+
 	private List<String> readFromPreviousImportedFile(final File f) {
 		// final File f = new File(OmeroImporterFlat.outputImportedFileName);
 		final List<String> previousImported = new ArrayList<String>();
@@ -842,7 +842,7 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 		}
 		final BufferedReader br = new BufferedReader(fr);
-
+		
 		String line = null;
 		try {
 			line = br.readLine();
@@ -862,7 +862,7 @@ public class OmeroImporter {
 					+ f.getName() + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-
+		
 		try {
 			br.close();
 			fr.close();
@@ -873,12 +873,12 @@ public class OmeroImporter {
 		}
 		return previousImported;
 	}
-
+	
 	private Map<String, File> readMMAMetadaFiles(final File rootDir) {
 		final Map<String, File> filesMap = new LinkedHashMap<String, File>();
 		final List<String> mmaNecessary = new ArrayList<String>();
 		// Read csv metadata files first and collect data
-		
+
 		for (final File project : rootDir.listFiles()) {
 			if (project.isDirectory()) {
 				final String projectName = project.getName();
@@ -896,7 +896,7 @@ public class OmeroImporter {
 											.endsWith(OmeroImporter.JSON_EXT)) {
 								continue;
 							}
-
+							
 							final int lastIndex = imageName.lastIndexOf(".");
 							String nameNoExt = imageName;
 							if (lastIndex != -1) {
@@ -966,9 +966,9 @@ public class OmeroImporter {
 				}
 			}
 		}
-
+		
 		if (!mmaNecessary.isEmpty() && !this.headless) {
-
+			
 			String message = "Missing MMA metadata for ";
 			message += mmaNecessary.size();
 			message += " entitie(s) : \n";
@@ -977,12 +977,12 @@ public class OmeroImporter {
 				message += "\n";
 			}
 			message += "Continue the importing?";
-
+			
 			this.hiddenFrame.setVisible(true);
 			final int response = JOptionPane.showConfirmDialog(this.hiddenFrame,
 					message, "Warning metadata missing",
 					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-
+			
 			switch (response) {
 				case JOptionPane.NO_OPTION:
 					return null;
@@ -991,10 +991,10 @@ public class OmeroImporter {
 			}
 			this.hiddenFrame.setVisible(false);
 		}
-
+		
 		return filesMap;
 	}
-
+	
 	private Map<String, Map<String, String>> readCSVMetadaFiles(
 			final File rootDir) {
 		final Map<String, Map<String, String>> keyValuesMap = new LinkedHashMap<String, Map<String, String>>();
@@ -1024,7 +1024,7 @@ public class OmeroImporter {
 												OmeroImporter.JSON_EXT)) {
 									continue;
 								}
-								
+
 								final int lastIndex = imageName
 										.lastIndexOf(".");
 								String nameNoExt = imageName;
@@ -1069,7 +1069,7 @@ public class OmeroImporter {
 										.endsWith(OmeroImporter.CSV_EXT)) {
 									continue;
 								}
-
+								
 								// MULTIFILE CSV how to handle?
 								Map<String, Map<String, String>> imagesMap = null;
 								imagesMap = this.readMetadataFromFileMultifile(
@@ -1088,14 +1088,14 @@ public class OmeroImporter {
 								}
 								final Set<String> keys = imagesMap.keySet();
 								keyValuesMap.putAll(imagesMap);
-
+								
 								for (final String key : keys) {
 									this.writeToLog(
 											"Successfully read metadata for "
 													+ key + "\n");
 									csvNecessary.remove(key);
 								}
-
+								
 							}
 							continue;
 						}
@@ -1148,9 +1148,9 @@ public class OmeroImporter {
 						"Successfully read metadata for " + projectName + "\n");
 			}
 		}
-		
+
 		if (!csvNecessary.isEmpty() && !this.headless) {
-			
+
 			String message = "Missing metadata for ";
 			message += csvNecessary.size();
 			message += " entitie(s) : \n";
@@ -1159,12 +1159,12 @@ public class OmeroImporter {
 				message += "\n";
 			}
 			message += "Continue the importing?";
-
+			
 			this.hiddenFrame.setVisible(true);
 			final int response = JOptionPane.showConfirmDialog(this.hiddenFrame,
 					message, "Warning metadata missing",
 					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-			
+
 			switch (response) {
 				case JOptionPane.NO_OPTION:
 					return null;
@@ -1173,18 +1173,18 @@ public class OmeroImporter {
 			}
 			this.hiddenFrame.setVisible(false);
 		}
-
+		
 		return keyValuesMap;
 	}
-	
+
 	private void importImages() throws IOException, InterruptedException {
 		final File rootDir = new File(this.target);
-		
+
 		// if (!rootDir.isDirectory()) {
 		// printToConsole(targetPath + " is not a valid directory");
 		// return;
 		// }
-		
+
 		if (this.hasB2) {
 			final String b2AuthorizeCommand = this.b2Command
 					+ " authorize-account " + this.b2AppKeyId + " "
@@ -1204,7 +1204,7 @@ public class OmeroImporter {
 			br.close();
 			is.close();
 		}
-
+		
 		final List<String> imported = new ArrayList<String>();
 		final List<String> metadataWritten = new ArrayList<String>();
 		final List<String> errors = new ArrayList<String>();
@@ -1212,7 +1212,7 @@ public class OmeroImporter {
 				.readFromPreviousImportedFiles();
 		final List<String> previousMetadata = this
 				.readFromPreviousMetadataFiles();
-		
+
 		final Map<String, Map<String, String>> keyValuesMap = this
 				.readCSVMetadaFiles(rootDir);
 		if (keyValuesMap == null) {
@@ -1221,7 +1221,7 @@ public class OmeroImporter {
 			this.printToConsole(error);
 			return;
 		}
-		
+
 		Map<String, File> mmaFilesMap = null;
 		if (this.hasMMAFiles) {
 			mmaFilesMap = this.readMMAMetadaFiles(rootDir);
@@ -1234,7 +1234,7 @@ public class OmeroImporter {
 		}
 		final LocalDateTime now = LocalDateTime.now();
 		final int hour = now.getHour();
-		
+
 		// Read images and writes them in omero + metadata
 		for (final File containerDir : rootDir.listFiles()) {
 			final String containerName = containerDir.getName();
@@ -1251,7 +1251,7 @@ public class OmeroImporter {
 							this.copyFile(this.destination, containerName, null,
 									null, projectDir);
 						}
-						
+
 					}
 					continue;
 				}
@@ -1350,7 +1350,7 @@ public class OmeroImporter {
 								this.writeToLog(ex.getMessage() + "\n");
 								errors.add(error);
 							}
-
+							
 							metadataWritten.add(partialPath);
 							this.writeToLog(
 									"Metadata for project " + projectName
@@ -1363,7 +1363,7 @@ public class OmeroImporter {
 						}
 					}
 				}
-				
+
 				for (final File datasetDir : projectDir.listFiles()) {
 					final String datasetName = datasetDir.getName();
 					final String datasetFullName = projectName + File.separator
@@ -1488,7 +1488,7 @@ public class OmeroImporter {
 									this.writeToLog(ex.getMessage() + "\n");
 									errors.add(error);
 								}
-
+								
 								metadataWritten.add(partialPath);
 								this.writeToLog("Metadata for dataset "
 										+ datasetFullName
@@ -1501,12 +1501,12 @@ public class OmeroImporter {
 							}
 						}
 					}
-					
+
 					// } else {
 					// this.config.targetClass.set("omero.model.Dataset");
 					// this.config.targetId.set(datasetId);
 					// }
-					
+
 					this.config.targetClass.set("omero.model.Dataset");
 					this.config.targetId.set(datasetId);
 					for (final File image : datasetDir.listFiles()) {
@@ -1516,7 +1516,7 @@ public class OmeroImporter {
 						final String imageName = image.getName();
 						final String imageFullName = datasetFullName
 								+ File.separator + imageName;
-						
+
 						// TODO SHOULD CHECK IF IMAGE NAME IS ALREADY PRESENT?!
 						if (!this.extFilter.isEmpty()
 								&& !imageName.endsWith(this.extFilter)) {
@@ -1526,7 +1526,7 @@ public class OmeroImporter {
 								&& !imageName.contains(this.nameFilter)) {
 							continue;
 						}
-						
+
 						if (imageName.endsWith(OmeroImporter.CSV_EXT)
 								|| imageName.endsWith(OmeroImporter.JSON_EXT)) {
 							if (!this.hasB2 && (this.destination != null)) {
@@ -1535,26 +1535,26 @@ public class OmeroImporter {
 							}
 							continue;
 						}
-						
+
 						final String partialPath = image.getAbsolutePath()
 								.toString()
 								.replace(this.target + File.separator, "");
-
+						
 						if (imageName.endsWith(OmeroImporter.CSV_EXT)
 								|| imageName.endsWith(OmeroImporter.JSON_EXT)) {
 							continue;
 						}
-
+						
 						if (!previousImported.contains(partialPath)) {
 							this.writeToLog("File " + imageFullName
 									+ " previously imported" + "\n");
-							
+
 							final List<String> paths = new ArrayList<String>();
 							paths.add(image.getAbsolutePath());
 							final String[] imagePaths = new String[paths
 									.size()];
 							paths.toArray(imagePaths);
-							
+
 							final ImportCandidates candidates = new ImportCandidates(
 									this.reader, imagePaths, this.handler);
 							// for (final String imagePath :
@@ -1568,7 +1568,7 @@ public class OmeroImporter {
 											MetadataLevel.ALL));
 							this.library.importCandidates(this.config,
 									candidates);
-							
+
 							Long imageId = -1L;
 							try {
 								imageId = this.retrieveImageId(imageName,
@@ -1596,7 +1596,7 @@ public class OmeroImporter {
 										+ " successfully imported" + "\n");
 							}
 						}
-						
+
 						Long imageId = -1L;
 						try {
 							imageId = this.retrieveImageId(imageName,
@@ -1619,7 +1619,7 @@ public class OmeroImporter {
 						if (imageId == -1L) {
 							continue;
 						}
-
+						
 						final int lastIndex = imageFullName.lastIndexOf(".");
 						String imageFullNameNoExt = imageFullName;
 						if (lastIndex != -1) {
@@ -1632,7 +1632,7 @@ public class OmeroImporter {
 								+ "microscope";
 						final Map<String, String> imageMap = keyValuesMap
 								.get(imageID);
-						
+
 						if (previousMetadata.contains(partialPath)) {
 							this.writeToLog("Metadata for  " + imageFullName
 									+ " previously written" + "\n");
@@ -1700,7 +1700,7 @@ public class OmeroImporter {
 							this.copyFile(this.destination, containerName,
 									projectName, datasetName, image);
 						}
-						
+
 						if (!OmeroImporter.IGNORE_TIME
 								&& (hour < this.timeStart)
 								&& (hour > this.timeEnd)) {
@@ -1728,7 +1728,7 @@ public class OmeroImporter {
 				}
 			}
 		}
-		
+
 		if (this.hasB2) {
 			this.writeToLog("Starting Backblaze backup" + "\n");
 			String b2SyncCommand = null;
@@ -1761,7 +1761,7 @@ public class OmeroImporter {
 		this.writeToPreviousImportedFile(imported);
 		this.writeToPreviousMetadataFile(metadataWritten);
 	}
-
+	
 	// Part 1 or more, counting "Cancer Avatar * metadata" string in the file
 	Map<String, Map<String, String>> readMetadataFromFileMultifile(
 			final String id, final File f, final int part) {
@@ -1776,9 +1776,9 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 			return null;
 		}
-		
+
 		final BufferedReader br = new BufferedReader(fr);
-		
+
 		int counter = 0;
 		String line = null;
 		boolean isKeyLine = false;
@@ -1842,7 +1842,7 @@ public class OmeroImporter {
 					+ f.getName() + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-		
+
 		try {
 			br.close();
 			fr.close();
@@ -1852,10 +1852,10 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 			return null;
 		}
-		
+
 		return map;
 	}
-	
+
 	// Part 1 or more, counting "Cancer Avatar * metadata" string in the file
 	Map<String, String> readMetadataFromFile(final File f, final int part) {
 		final Map<String, String> map = new LinkedHashMap<String, String>();
@@ -1869,9 +1869,9 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 			return null;
 		}
-
+		
 		final BufferedReader br = new BufferedReader(fr);
-
+		
 		int counter = 0;
 		String line = null;
 		try {
@@ -1901,7 +1901,7 @@ public class OmeroImporter {
 					+ f.getName() + "\n");
 			this.writeToLog(ex.getMessage() + "\n");
 		}
-
+		
 		try {
 			br.close();
 			fr.close();
@@ -1911,10 +1911,10 @@ public class OmeroImporter {
 			this.writeToLog(ex.getMessage() + "\n");
 			return null;
 		}
-
+		
 		return map;
 	}
-
+	
 	public void copyFile(final String destination, final String containerName,
 			final String projectName, final String datasetName, final File f) {
 		String path = destination;
@@ -1939,7 +1939,7 @@ public class OmeroImporter {
 				datasetDir.mkdir();
 			}
 		}
-		
+
 		final String newFilePath = path + File.separator + f.getName();
 		try {
 			Files.copy(Paths.get(f.getAbsolutePath()), Paths.get(newFilePath));
@@ -1967,7 +1967,7 @@ public class OmeroImporter {
 			}
 		}
 	}
-	
+
 	public static void main(final String[] args) {
 		String hostName = "localhost", port = "4064", userName = null,
 				password = null;
@@ -2012,11 +2012,11 @@ public class OmeroImporter {
 					"-tf <start:end> to specify in which timeframe the app can run");
 			System.exit(0);
 		}
-		
+
 		final OmeroImporter importer = new OmeroImporter();
 		importer.initLogFiles();
 		importer.printToConsole("LOG FILE INIT");
-		
+
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-cfg")) {
 				configFile = true;
@@ -2086,9 +2086,9 @@ public class OmeroImporter {
 				timeStart = tfDataSplit[0];
 				timeEnd = tfDataSplit[1];
 			}
-			
+
 		}
-		
+
 		if (configFile) {
 			final Map<String, String> parameters = importer.readConfigFile();
 			if (parameters == null) {
@@ -2100,7 +2100,7 @@ public class OmeroImporter {
 				}
 				System.exit(1);
 			}
-			
+
 			for (final String key : parameters.keySet()) {
 				if (key.startsWith("#")) {
 					continue;
@@ -2182,7 +2182,7 @@ public class OmeroImporter {
 				importer.sendErrorEmail(error);
 			}
 			System.exit(1);
-			
+
 		}
 		if (password == null) {
 			final String error = "password has not been specified, application terminated.";
@@ -2202,7 +2202,7 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		}
-		
+
 		// if (destination == null) {
 		// final String error = "destination has not been specified, application
 		// terminated.";
@@ -2213,7 +2213,7 @@ public class OmeroImporter {
 		// }
 		// System.exit(1);
 		// }
-		
+
 		if (hasB2 && ((b2AppKeyId == null) || (b2AppKey == null)
 				|| (b2BucketName == null))) {
 			final String error = "set has Backblaze backup but some bucket information have not been specified, application terminated.";
@@ -2224,7 +2224,7 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		}
-		
+
 		if ((timeStart == null) || (timeEnd == null)) {
 			final String error = "start and end time have not been specified.";
 			importer.writeToLog("ERROR: " + error + "\n");
@@ -2234,9 +2234,9 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		} else {
-			
+
 		}
-		
+
 		Integer timeStartI = null;
 		Integer timeEndI = null;
 		try {
@@ -2265,7 +2265,7 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		}
-
+		
 		importer.setTarget(target);
 		importer.setDestination(destination);
 		importer.setDeleteFiles(deleteFiles);
@@ -2275,7 +2275,7 @@ public class OmeroImporter {
 		importer.setEmailTo(emailTo);
 		importer.setAdminEmailTo(adminEmailTo);
 		importer.setTimeframe(timeStartI, timeEndI);
-		
+
 		if (userName == null) {
 			final String error = "omero Username has not been specified, application terminated.";
 			importer.writeToLog("ERROR: " + error + "\n");
@@ -2294,7 +2294,7 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		}
-		
+
 		if (port == null) {
 			final String error = "omero port has not been specified, application terminated.";
 			importer.writeToLog("ERROR: " + error + "\n");
@@ -2304,7 +2304,7 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		}
-		
+
 		Integer portI = null;
 		try {
 			portI = Integer.valueOf(port);
@@ -2319,7 +2319,7 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		}
-		
+
 		final File f = new File(target);
 		if (!f.exists()) {
 			final String error = "target directory doesn't exists, application terminated.";
@@ -2339,7 +2339,7 @@ public class OmeroImporter {
 			}
 			System.exit(1);
 		}
-		
+
 		if (destination != null) {
 			final File f2 = new File(destination);
 			if (!hasB2 && !f2.exists()) {
@@ -2361,12 +2361,12 @@ public class OmeroImporter {
 				System.exit(1);
 			}
 		}
-		
+
 		importer.setServerAccessInformation(hostName, portI, userName,
 				password);
-		
+
 		importer.printToConsole("SERVER CONFIG INIT");
-		
+
 		try {
 			importer.init();
 		} catch (final Exception ex) {
@@ -2381,9 +2381,9 @@ public class OmeroImporter {
 			importer.close();
 			System.exit(1);
 		}
-
-		importer.printToConsole("IMPORTER INIT");
 		
+		importer.printToConsole("IMPORTER INIT");
+
 		try {
 			importer.importImages();
 		} catch (final IOException ex) {
@@ -2410,30 +2410,30 @@ public class OmeroImporter {
 			System.exit(1);
 		}
 		importer.printToConsole("IMAGES IMPORT DONE");
-		
+
 		importer.close();
 	}
-	
+
 	private void setHeadless(final boolean headless) {
 		this.headless = headless;
 	}
-	
+
 	private void setTarget(final String target) {
 		this.target = target;
 	}
-
+	
 	private void setDestination(final String destination) {
 		this.destination = destination;
 	}
-
+	
 	private void setDeleteFiles(final boolean deleteFiles) {
 		this.deleteFiles = deleteFiles;
 	}
-
+	
 	private void setHasMMAFiles(final boolean hasMMAFiles) {
 		this.hasMMAFiles = hasMMAFiles;
 	}
-
+	
 	private void setB2Data(final boolean hasB2, final String b2AppKeyId,
 			final String b2AppKey, final String b2BucketName) {
 		this.hasB2 = hasB2;
@@ -2441,15 +2441,15 @@ public class OmeroImporter {
 		this.b2AppKey = b2AppKey;
 		this.b2BucketName = b2BucketName;
 	}
-
+	
 	private void setEmailTo(final String emailTo) {
 		this.emailTo = emailTo;
 	}
-
+	
 	private void setAdminEmailTo(final String adminEmailTo) {
 		this.adminEmailTo = adminEmailTo;
 	}
-	
+
 	private void setTimeframe(final int timeStart, final int timeEnd) {
 		this.timeStart = timeStart;
 		this.timeEnd = timeEnd;
