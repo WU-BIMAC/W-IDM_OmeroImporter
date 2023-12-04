@@ -1,15 +1,16 @@
 # W-IDM_OmeroImporter
-This repository contains software that automatically imports images in an OMERO repository, and writes relevant sample preparation metadata found in associated csv file to OMERO as key-value pairs.  
-Additional features include:  
-1) Copy the images and the metadata files in a backup location (either mapped or Backblaze at the moment) and optionally delete the images and metadata files from the origin.  
-2) Read Micro-Meta App json metadata files together with the associated images and import them on OMERO as file attachments compatibile with the Micro-Meta app OMERO plugin.  
-3) For each run create a log file with a list of the succesfully imported files, and a file with a list of csv metadata files successfully written on OMERO.  
-4) Use the "previously imported" list to avoid repeating operations in case the files are not removed from the origin folder.  
-5) Use the "metadata previously written" list to avoid overriding metadata in case the files are not removed from the origin folder.  
-6) For each run create files with errors for debug purposes.  
-7) Automatically email the user "owner" of the importing session, if indicated in the parameters, at the end of the importing with relevant data about the process.  
-8) Automatically email the user "admin" of the setup, if indicated in the parameters, at the end of the importing with attached all the output file.  
+The OMEROImporter (Automated Image Data and Metadata Annotation Importer) automatically imports image data from acquisition storage to a repository, and annotates such images with relevant sample preparation and microscopy metadata as follows:
+1) Sample Metadata is imported from CVS files exported from customized metadata-collection spreadsheet templates (i.e., xcel, google sheet, etc.,) and written as key/value or tag unstructured annotations in OMERO
+2) Microscopy metadata is imported from Microscope.JSON files produced using the Micro-Meta App (https://github.com/WU-BIMAC/MicroMetaApp-Electron) and attached to the images to be viewed using the Micro-Meta App OMERO-plugin. (https://github.com/WU-BIMAC/MicroMetaApp-Omero)
 
+Additional features include:  
+1) Copy the images and the metadata files in a backup location and optionally delete the images and metadata files from the origin.  
+3) Create a log file with a list of the successfully imported files and a file with a list of CSV metadata files successfully written on OMERO.  
+4) Create an error report file for debugging purposes.  
+5) Use the "previously imported" list to avoid duplicate importing.
+6) Use the "metadata previously written" list to override metadata annotations.  
+7) Automatically email a report to the user of the importing session, if indicated.  
+8) Automatically email the admin of the importing session, if indicated/
 
 ## Installation
 To install the application simply download the current release zip file, and unpack it a location of your choice on the system where you plan to run the sofware. 
