@@ -1,7 +1,7 @@
 # W-IDM_OmeroImporter
-The OMEROImporter (Automated Image Data and Metadata Annotation Importer) automatically imports image data from acquisition storage to a repository, and annotates such images with relevant sample preparation and microscopy metadata as follows:
-1) Sample Metadata is imported from CVS files exported from customized metadata-collection spreadsheet templates (i.e., xcel, google sheet, etc.,) and written as key/value or tag unstructured annotations in OMERO
-2) Microscopy metadata is imported from Microscope.JSON files produced using the Micro-Meta App (https://github.com/WU-BIMAC/MicroMetaApp-Electron) and attached to the images to be viewed using the Micro-Meta App OMERO-plugin. (https://github.com/WU-BIMAC/MicroMetaApp-Omero)
+The OMEROImporter (Automated Image Data and Metadata Annotation Importer) automatically reads bioimage data and metadata annotations from a workstation running the image acquisition software or from an associated network drive and imports it to an available OMERO repository. Metadata annotation is carried out as follows:
+1) Experimental and sample description Metadata is imported from CVS files exported from customized metadata-collection spreadsheet templates (i.e., xcel, google sheet, etc.,) and written in OMERO as key/value or tag unstructured annotations.
+2) Microscopy metadata is imported from Microscope-Hardware.JSON files produced using the Micro-Meta App (https://github.com/WU-BIMAC/MicroMetaApp-Electron) and attached to the relevant dataset or image in OMERO. The content of these JSON files can then be visualized using the Micro-Meta App OMERO-plugin. (https://github.com/WU-BIMAC/MicroMetaApp-Omero).
 
 Additional features include:  
 1) Copy the images and the metadata files in a backup location and optionally delete the images and metadata files from the origin.  
